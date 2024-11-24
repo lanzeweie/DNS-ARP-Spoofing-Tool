@@ -8,6 +8,7 @@ from datetime import datetime
 import threading
 import time
 import subprocess
+import keyboard
 
 redirect_ip = ""
 attacking = False
@@ -109,6 +110,7 @@ class App(QWidget):
         self.initUI()
         self.target_ips = []
         self.sniff_thread = None  # Initialize as None
+        keyboard.add_hotkey('ctrl+p', self.toggle_visibility)
 
     def initUI(self):
         self.setWindowTitle('DNS & ARP Spoofing Tool')
@@ -147,6 +149,13 @@ class App(QWidget):
 
         self.target_ip_list.itemDoubleClicked.connect(self.on_item_double_clicked)
 
+    def toggle_visibility(self):
+        """Toggle the visibility of the window."""
+        if self.isVisible():
+            self.hide()  # Hide the window
+        else:
+            self.show()  # Show the window
+            
     def populate_interfaces(self):
         """Populate the interface dropdown with available network interfaces."""
         interfaces = get_if_list()
