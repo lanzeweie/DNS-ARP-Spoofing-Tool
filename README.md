@@ -45,7 +45,7 @@ Arp+DNS 双欺骗攻击同时进行
 
 Nnuitka PyQT5打包:
 ```
-python -m nuitka --standalone --onefile --main="arp-ans-attact-tool.py" --windows-icon-from-ico="E:/Code/dn/build/9k1xp-9nxcx-001.ico" --enable-plugins="anti-bloat" --company-name=" lanzeweie" --product-name="Arp and Dns Spooding Tools" --file-version="1.0" --enable-plugin=pyqt5 --windows-disable-console  
+python -m nuitka --standalone --onefile --main="arp-ans-attact-tool.py" --windows-icon-from-ico="E:/Code/dn/build/9k1xp-9nxcx-001.ico" --enable-plugins="anti-bloat" --company-name=" lanzeweie" --product-name="Arp and Dns Spooding Tools" --file-version="1.0" --enable-plugin=pyqt5 --windows-disable-console --include-data-file=build\9k1xp-9nxcx-001.ico=9k1xp-9nxcx-001.ico
 ```
 
    

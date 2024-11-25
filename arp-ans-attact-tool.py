@@ -1,18 +1,37 @@
-import sys
+import os
 import socket
-import nmap
-from scapy.all import get_if_hwaddr, conf, send, sendp, DNS, IP, UDP, DNSRR, Ether, ARP, sniff, AsyncSniffer, get_if_list, get_if_addr, srp
-from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtWidgets import QVBoxLayout, QListWidget, QPushButton, QLineEdit, QWidget, QMenu, QComboBox
-from datetime import datetime
+import subprocess
+import sys
 import threading
 import time
-import subprocess
+from datetime import datetime
+
 import keyboard
+import nmap
+from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import (QComboBox, QLineEdit, QListWidget, QMenu,
+                             QPushButton, QVBoxLayout, QWidget)
+from scapy.all import (ARP, DNS, DNSRR, IP, UDP, AsyncSniffer, Ether, conf,
+                       get_if_addr, get_if_hwaddr, get_if_list, send, sendp,
+                       sniff, srp)
 
 redirect_ip = ""
 attacking = False
 scanning = False
+
+def resource_path(relative_path):
+    try:
+        # PyInstaller 创建临时文件夹，并将路径存储在 _MEIPASS 中
+        base_path = sys._MEIPASS
+    except AttributeError:
+        # 未打包时，直接使用当前路径
+        base_path = os.path.abspath("./build")
+
+    return os.path.join(base_path, relative_path)
+
+# 使用 resource_path 获取图标文件的路径
+icon_path = resource_path('9k1xp-9nxcx-001.ico')
 
 def get_gateway_ip():
     """Get gateway IP address."""
@@ -114,6 +133,7 @@ class App(QWidget):
 
     def initUI(self):
         self.setWindowTitle('DNS & ARP Spoofing Tool')
+        self.setWindowIcon(QIcon(icon_path))
         self.layout = QVBoxLayout()
 
         self.interface_select = QComboBox(self)
