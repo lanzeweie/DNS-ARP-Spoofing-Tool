@@ -20,7 +20,10 @@ Arp+DNS 双欺骗攻击同时进行
 
 ## 使用方法
 1. **下载构建包**：
-   [DNS & ARP Spoofing Tool](https://github.com/<your-repo>/releases) 
+   Nnuitka打包  
+   [DNS & ARP Spoofing Tool](https://github.com/lanzeweie/DNS-ARP-Spoofing-Tool/releases)  
+2.启动即可使用    
+注意：DNS欺骗功能并没有一同启动web服务器，如果需要定向网站请自行启动80端口的http服务。  
 
 ### 本地开发 
 1. **克隆项目**：
@@ -39,6 +42,12 @@ Arp+DNS 双欺骗攻击同时进行
    ```bash
    pip install -r requirements.txt
    ```
+
+Nnuitka PyQT5打包:
+```
+python -m nuitka --standalone --onefile --main="arp-ans-attact-tool.py" --windows-icon-from-ico="E:/Code/dn/build/9k1xp-9nxcx-001.ico" --enable-plugins="anti-bloat" --company-name=" lanzeweie" --product-name="Arp and Dns Spooding Tools" --file-version="1.0" --enable-plugin=pyqt5 --windows-disable-console  
+```
+
    
 ## 安全问题
 本程序仅供教育和研究目的，严禁在未经授权的公共环境中使用。使用此工具进行未授权的攻击是违法的，务必在合法和道德的环境中使用。请确保在合法的环境中使用此工具，避免对他人网络造成损害。使用者需自行承担使用风险。在使用 ARP 欺骗和 DNS 欺骗时，请确保你有权限进行这些操作。
