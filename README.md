@@ -51,7 +51,7 @@ python -m nuitka --standalone --onefile --main="arp-ans-attact-tool.py" --window
 ```
 Nnuitka PyQT5打包 有控制台 debug:  
 ```
-python -m nuitka --standalone --onefile --main="arp-ans-attact-tool.py" --windows-icon-from-ico="build\9k1xp-9nxcx-001.ico" --enable-plugins="anti-bloat" --company-name="lanzeweie" --product-name="Arp and Dns Spooding Tools" --file-version="1.0" --enable-plugin=pyqt5 --include-data-file=build\9k1xp-9nxcx-001.ico=9k1xp-9nxcx-001.ico --output=arp-ans-attact-tool-debug
+python -m nuitka --standalone --onefile --main="arp-ans-attact-tool.py" --windows-icon-from-ico="build\9k1xp-9nxcx-001.ico" --enable-plugins="anti-bloat" --company-name="lanzeweie" --product-name="Arp and Dns Spooding Tools" --file-version="1.0" --enable-plugin=pyqt5 --include-data-file=build\9k1xp-9nxcx-001.ico=9k1xp-9nxcx-001.ico --output-filename=arp-ans-attact-tool-debug 
 ```
 
 ## 安全问题
