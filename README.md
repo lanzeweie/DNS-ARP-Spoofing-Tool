@@ -53,6 +53,9 @@ Nnuitka PyQT5打包 有控制台 debug:
 ```
 python -m nuitka --standalone --onefile --main="arp-ans-attact-tool.py" --windows-icon-from-ico="build\9k1xp-9nxcx-001.ico" --enable-plugins="anti-bloat" --company-name="lanzeweie" --product-name="Arp and Dns Spooding Tools" --file-version="1.0" --enable-plugin=pyqt5 --include-data-file=build\9k1xp-9nxcx-001.ico=9k1xp-9nxcx-001.ico --output-filename=arp-ans-attact-tool-debug 
 ```
+## 已知问题 
+切换网卡并不能切换扫描局域网功能的网段。  
+
 
 ## 安全问题
 本程序仅供教育和研究目的，严禁在未经授权的公共环境中使用。使用此工具进行未授权的攻击是违法的，务必在合法和道德的环境中使用。请确保在合法的环境中使用此工具，避免对他人网络造成损害。使用者需自行承担使用风险。在使用 ARP 欺骗和 DNS 欺骗时，请确保你有权限进行这些操作。
