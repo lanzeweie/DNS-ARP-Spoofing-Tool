@@ -16,7 +16,7 @@ Arp+DNS 双欺骗攻击同时进行
 快捷键 `win+p` 隐藏/显示 应用  
 
 ## 要求
-- Python 3.x （本地要求）
+- Python 3.x （本地开发或者Python运行要求）
 - [npCap (WinPcap)](https://nmap.org/download.html#windows)  （必须）
 - [Nmap](https://nmap.org/download.html#windows)  （必须）
 
@@ -25,7 +25,7 @@ Arp+DNS 双欺骗攻击同时进行
    Nnuitka打包  
    [DNS & ARP Spoofing Tool](https://github.com/lanzeweie/DNS-ARP-Spoofing-Tool/releases)  
 2.启动即可使用    
-注意：DNS欺骗功能并没有一同启动web服务器，如果需要定向网站请自行启动80端口的http服务。  
+注意：DNS欺骗功能并没有一同启动web服务器，如果需要定向到网站请自行启动80端口的http服务，否则造成的效果只有断网。     
 
 ### 本地开发 
 1. **克隆项目**：
