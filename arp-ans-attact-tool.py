@@ -20,6 +20,29 @@ redirect_ip = ""
 attacking = False
 scanning = False
 
+def check_nmap():
+    try:
+        # 尝试运行 nmap --version 检查 Nmap 是否存在
+        subprocess.run(['nmap', '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return True
+    except FileNotFoundError:
+        return False
+
+def show_warning():
+    app = QtWidgets.QApplication(sys.argv)
+    result = QtWidgets.QMessageBox.warning(
+        None,
+        "错误",
+        "未检测到Nmap，是否跳转到nmap下载地址，请下载nmap-7.95-setup.exe",
+        QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+        QtWidgets.QMessageBox.Yes
+    )
+
+    if result == QtWidgets.QMessageBox.Yes:
+        webbrowser.open("https://nmap.org/download.html#windows")
+
+    sys.exit()
+
 def resource_path(relative_path):
     try:
         # PyInstaller 创建临时文件夹，并将路径存储在 _MEIPASS 中
@@ -33,12 +56,22 @@ def resource_path(relative_path):
 # 使用 resource_path 获取图标文件的路径
 icon_path = resource_path('9k1xp-9nxcx-001.ico')
 
-def get_gateway_ip():
-    """Get gateway IP address."""
+def get_gateway_ip_now_192():
+    """获得真实局域网IP."""
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(('8.8.8.8', 80))
         return s.getsockname()[0]
+    finally:
+        s.close()
+
+def get_gateway_ip(iface):
+    """Get gateway IP address based on the specified interface."""
+    try:
+        iface_ip = get_if_addr(iface)  # 使用 get_if_addr 获取接口的 IP 地址
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 80))
+        return iface_ip  # 返回根据接口获取的 IP 地址
     finally:
         s.close()
         
@@ -124,18 +157,30 @@ class App(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.redirect_ip = get_gateway_ip()
+        
+        self.redirect_ip = ""  # 初始化为一个默认值
+        self.initUI()  # 初始化用户界面
+
+        # 当前选择的接口
+        selected_iface_text = self.interface_select.currentText()  
+        iface = selected_iface_text.split(' (')[0]  # 仅获取接口名称
+
+        # 获取网关 IP，并设置重定向 IP 输入框的值
+        self.redirect_ip = get_gateway_ip(iface)  # 传递接口作为参数
+        self.redirect_ip_input.setText(self.redirect_ip)  # 设置重定向 IP 输入框的值
+
         self.interface = None
-        self.initUI()
         self.target_ips = []
         self.sniff_thread = None  # Initialize as None
         keyboard.add_hotkey('ctrl+p', self.toggle_visibility)
+
 
     def initUI(self):
         self.setWindowTitle('DNS & ARP Spoofing Tool')
         self.setWindowIcon(QIcon(icon_path))
         self.layout = QVBoxLayout()
 
+        # Initialize interface_select
         self.interface_select = QComboBox(self)
         self.populate_interfaces()
         self.layout.addWidget(self.interface_select)
@@ -169,6 +214,7 @@ class App(QWidget):
 
         self.target_ip_list.itemDoubleClicked.connect(self.on_item_double_clicked)
 
+
     def toggle_visibility(self):
         """Toggle the visibility of the window."""
         if self.isVisible():
@@ -179,19 +225,23 @@ class App(QWidget):
     def populate_interfaces(self):
         """Populate the interface dropdown with available network interfaces."""
         interfaces = get_if_list()
-        gateway_ip = get_gateway_ip()  # 获取本机的网关 IP
-        for iface in interfaces:
-            try:
-                mac = get_if_hwaddr(iface)
-                ip = get_if_addr(iface)
-                if ip != "0.0.0.0":
-                    item_text = f"{iface} (MAC: {mac}, IP: {ip})"
-                    self.interface_select.addItem(item_text)
-                    # 优先选择与网关 IP 一致的接口
-                    if ip == gateway_ip:
-                        self.interface_select.setCurrentText(item_text)  # 设置为当前选择
-            except Exception as e:
-                print(f"Could not retrieve info for {iface}: {e}")
+        if interfaces:  # 确保接口列表非空
+            # 选择第一个接口的 IP 作为网关 IP（可以自行修改选择逻辑）
+            iface = interfaces[0]  
+            gateway_ip = get_gateway_ip_now_192()  # 获取第一个接口的网关 IP
+            for iface in interfaces:
+                try:
+                    mac = get_if_hwaddr(iface)
+                    ip = get_if_addr(iface)
+                    if ip != "0.0.0.0":
+                        item_text = f"{iface} (MAC: {mac}, IP: {ip})"
+                        self.interface_select.addItem(item_text)
+                        # 优先选择与网关 IP 一致的接口
+                        if ip == gateway_ip:
+                            self.interface_select.setCurrentText(item_text)  # 设置为当前选择
+                except Exception as e:
+                    print(f"Could not retrieve info for {iface}: {e}")
+
 
 
     def on_item_double_clicked(self, item):
@@ -243,7 +293,10 @@ class App(QWidget):
     def perform_network_scan(self):
         """Perform the actual scanning and update the UI."""
         global scanning
-        gateway_ip = get_gateway_ip()
+        selected_iface_text = self.interface_select.currentText()  
+        iface = selected_iface_text.split(' (')[0]  # 仅获取接口名称
+
+        gateway_ip = get_gateway_ip(iface)
         network = f"{gateway_ip.rsplit('.', 1)[0]}.0/24"
         self.target_ip_list.clear()
         result_found = False
@@ -269,12 +322,11 @@ class App(QWidget):
         selected_ips = [item.text().split(' - ')[0] for item in self.target_ip_list.selectedItems()]
 
         self.target_ips = set(selected_ips + manual_ips) 
-
-        if not self.target_ips: 
-            print("没有提供任何目标 IP。空目标只会对主机造成影响")
-            QtWidgets.QMessageBox.warning(self, "警告", "空目标只作用于主机")
-        
+  
         if not attacking: 
+            if not self.target_ips: 
+                print("没有提供任何目标 IP。空目标只会对主机造成影响")
+                QtWidgets.QMessageBox.warning(self, "警告", "没有提供任何目标 IP。空目标只会对当前主机造成影响")
             print("Goal IP:", ", ".join(self.target_ips))
             selected_iface_text = self.interface_select.currentText()
             iface = selected_iface_text.split(' (')[0]  # 仅获取接口名称
@@ -346,6 +398,8 @@ class App(QWidget):
             print("嗅探器未运行或未初始化。")
 
 if __name__ == '__main__':
+    if not check_nmap():
+        show_warning()
     app = QtWidgets.QApplication(sys.argv)
     ex = App()
     ex.show()

@@ -17,13 +17,12 @@ Arp+DNS 双欺骗攻击同时进行
 
 ## 要求
 - Python 3.x （本地要求）
-- [npCap (WinPcap)](https://nmap.org/download.html#windows)  （必须）
-- [Nmap](https://nmap.org/download.html#windows)  （必须）
+- [Nmap+NCap](https://nmap.org/download.html#windows)  （必须）
 
 ## 使用方法
 1. **下载构建包**：
    Nnuitka打包  
-   [DNS & ARP Spoofing Tool](https://github.com/lanzeweie/DNS-ARP-Spoofing-Tool/releases)  
+   [DNS & ARP Spoofing Tool Download](https://github.com/lanzeweie/DNS-ARP-Spoofing-Tool/releases)  
 2.启动即可使用    
 注意：DNS欺骗功能并没有一同启动web服务器，如果需要定向网站请自行启动80端口的http服务。  
 
